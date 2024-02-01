@@ -1,0 +1,70 @@
+class ExpenseManager:
+    def __init__(self, roommates):
+        self.roommates = roommates
+        self.users = {roommate: 0 for roommate in self.roommates}
+        self.expenses = []
+
+    def add_expense(self, payer, amount, participants):
+        share = amount / len(participants)
+
+        # Update payer's balance
+        self.users[payer] -= amount
+
+        # Update participants' balances
+        for participant in participants:
+            if participant != payer:
+                self.users[participant] += share
+
+        # Record the expense
+        self.expenses.append({
+            'payer': payer,
+            'amount': amount,
+            'participants': participants
+        })
+
+    def print_balances(self):
+        print("\nUser Balances:")
+        for user, balance in self.users.items():
+            print(f"{user}: ${balance:.2f}")
+
+    def print_expenses(self):
+        print("\nExpense History:")
+        for expense in self.expenses:
+            print(f"Payer: {expense['payer']}, Amount: ${expense['amount']:.2f}, Participants: {', '.join(expense['participants'])}")
+
+# Get roommates' names from the user
+roommates = input("Enter names of roommates separated by commas: ").split(',')
+
+# Create an instance of ExpenseManager
+expense_manager = ExpenseManager(roommates)
+
+# Example usage with user input
+while True:
+    print("\nOptions:")
+    print("1. Add Expense")
+    print("2. Print Balances")
+    print("3. Print Expense History")
+    print("4. Quit")
+
+    choice = input("Enter your choice (1-4): ")
+
+    if choice == '1':
+        payer = input("Enter the name of the payer: ")
+        amount = float(input("Enter the expense amount: "))
+        participants = input("Enter the names of participants separated by commas: ").split(',')
+        
+        expense_manager.add_expense(payer, amount, participants)
+        print("Expense added successfully!")
+
+    elif choice == '2':
+        expense_manager.print_balances()
+
+    elif choice == '3':
+        expense_manager.print_expenses()
+
+    elif choice == '4':
+        print("Exiting the Expense Manager. Goodbye!")
+        break
+
+    else:
+        print("Invalid choice. Please enter a number between 1 and 4.")
